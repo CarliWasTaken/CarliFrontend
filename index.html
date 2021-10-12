@@ -15,13 +15,10 @@
         var socketSpeed = io('http://127.0.0.1:5000/drive');
 
         document.addEventListener('keydown', (e) => {
-            // timestamp of last loop
-            var last = new Date();
-            // timestamp of current loop
-            var now;
+            console.log('down', e.key)
             
             // minimum speed
-            var low = -127;
+            var min = -127;
             // default speed
             var neutral = 0;
             // maximum speed
@@ -38,51 +35,46 @@
             var dir_mod = 3.0;
 
             if (!e.repeat) {
-                // set current loop time
-                now = new Date();
+
                 // get pressed key
                 var key = e.key;
                 
                 // check if speed should be applied
-                if((now - last) >= waitTime) {
-                    if (key == 'w') {
-                        speed += speed_mod;
-                        document.getElementById(key).classList.add('key-pressed');
-                    } else if (key == 's') {
-                        speed -= speed_mod;
-                        document.getElementById(key).classList.add('key-pressed');
-                    }
-                    
-                    if (speed < min) {
-                        speed = min;
-                    } else if(speed > max) {
-                        speed = max;
-                    }
-
-
-
-                    if (key == 's') {
-                        direction += dir_mod;
-                        document.getElementById(key).classList.add('key-pressed');
-                    } else if (key == 'a') {
-                        direction -= dir_mod;
-                        document.getElementById(key).classList.add('key-pressed');
-                    }
-                    
-                    if (direction < min) {
-                        direction = min;
-                    } else if(direction > max) {
-                        direction = max;
-                    }
-
-                    // send speed value
-                    socketSpeed.emit('speed', { data: Math.round(speed) });
-                    //socketDirection.emit('direction', { data: Math.round(direction) });
-                    console.log("Speed    : " + speed);
-                    console.log("Direction: " + direction);
-
-                    last = now;
+                if (key == 'w') {
+                    speed += speed_mod;
+                    document.getElementById(key).classList.add('key-pressed');
+                } else if (key == 's') {
+                    speed -= speed_mod;
+                    document.getElementById(key).classList.add('key-pressed');
                 }
+                
+                if (speed < min) {
+                    speed = min;
+                } else if(speed > max) {
+                    speed = max;
+                }
+
+
+                if (key == 's') {
+                    direction += dir_mod;
+                    document.getElementById(key).classList.add('key-pressed');
+                } else if (key == 'a') {
+                    direction -= dir_mod;
+                    document.getElementById(key).classList.add('key-pressed');
+                }
+                
+                if (direction < min) {
+                    direction = min;
+                } else if(direction > max) {
+                    direction = max;
+                }
+
+                // send speed value
+                socketSpeed.emit('speed', { data: Math.round(speed) });
+                //socketDirection.emit('direction', { data: Math.round(direction) });
+                console.log("Speed    : " + speed);
+                console.log("Direction: " + direction);
+
             }
         });
 
@@ -105,7 +97,7 @@
                     document.getElementById(key).classList.remove('key-pressed');
                 }
 
-                socketSpeed.emit('speed', { data: Math.round(speed) });
+                //socketSpeed.emit('speed', { data: Math.round(speed) });
                 //socketDirection.emit('direction', { data: Math.round(direction) });
             }
         });
