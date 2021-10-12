@@ -23,8 +23,7 @@
         let dir_mod = 3.0;
 
         document.addEventListener('keydown', (e) => {
-            console.log('down', e.key)
-
+            document.getElementById(e.key).classList.add('key-pressed');
             if (e.repeat) {
                 // get pressed key
                 var key = e.key;
@@ -32,10 +31,8 @@
                 // check if speed should be applied
                 if (key == 'w') {
                     speed += speed_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 } else if (key == 's') {
                     speed -= speed_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 }
                 
                 if (speed < min) {
@@ -47,10 +44,8 @@
 
                 if (key == 's') {
                     direction += dir_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 } else if (key == 'a') {
                     direction -= dir_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 }
                 
                 if (direction < min) {
@@ -74,20 +69,20 @@
 
                 if (key == 'w') {
                     speed = 0;
-                    socketSpeed.emit('forward', { data: 'released' });
+                    socketSpeed.emit('speed', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                     console.log(key);
                 } else if (key == 's') {
                     speed = 0;
-                    socketSpeed.emit('backward', { data: 'released' });
+                    socketSpeed.emit('speed', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'a') {
                     direction = 0;
-                    socketSpeed.emit('left', { data: 'released' });
+                    socketSpeed.emit('direction', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'd') {
                     direction = 0;
-                    socketSpeed.emit('right', { data: 'released' });
+                    socketSpeed.emit('direction', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 }
             }
