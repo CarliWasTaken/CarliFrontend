@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carli-Control</title>
+    <link rel="stylesheet" href="index.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
+    <script src="socket.io-1.2.0.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        //var socketSpeed = io('http://127.0.0.1:5000/drive');
+
+
+        window.addEventListener("gamepadconnected", function(e) {
+            console.log('controller connected');
+
+            var gp = navigator.getGamepads()[e.gamepad.index];
+            console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+            gp.index, gp.id,
+            gp.buttons.length, gp.axes.length);
+
+            console.log(gp.buttons);
+            console.log(gp.axes);
+
+
+
+        });
+
+        window.addEventListener("gamepaddisconnected", function(e) {
+            console.log("disconnected controller")
+        });
+        
+        
+    </script>
+</head>
+
+<body>
+    <h1>Controll</h1>
+</body>
+
+</html>
