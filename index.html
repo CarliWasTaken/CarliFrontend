@@ -13,29 +13,19 @@
     <script src="socket.io-1.2.0.js"></script>
     <script type="text/javascript" charset="utf-8">
         var socketSpeed = io('http://127.0.0.1:5000/drive');
+        let min = -127;
+        let neutral = 0;
+        let max = 127;
+
+        let speed = 0;
+        let direction = 0;
+        let speed_mod = 3.0;
+        let dir_mod = 3.0;
 
         document.addEventListener('keydown', (e) => {
             console.log('down', e.key)
-            
-            // minimum speed
-            var min = -127;
-            // default speed
-            var neutral = 0;
-            // maximum speed
-            var max = 127;
-            
-            // speed of loop in  ms
-            var waitTime = 100 
 
-            // set speed to default value
-            var speed = neutral;
-            var direction = neutral;
-            // acceleration
-            var speed_mod = 3.0;
-            var dir_mod = 3.0;
-
-            if (!e.repeat) {
-
+            if (e.repeat) {
                 // get pressed key
                 var key = e.key;
                 
@@ -83,22 +73,23 @@
                 var key = e.key;
 
                 if (key == 'w') {
+                    speed = 0;
                     socketSpeed.emit('forward', { data: 'released' });
                     document.getElementById(key).classList.remove('key-pressed');
                     console.log(key);
                 } else if (key == 's') {
+                    speed = 0;
                     socketSpeed.emit('backward', { data: 'released' });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'a') {
+                    direction = 0;
                     socketSpeed.emit('left', { data: 'released' });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'd') {
+                    direction = 0;
                     socketSpeed.emit('right', { data: 'released' });
                     document.getElementById(key).classList.remove('key-pressed');
                 }
-
-                //socketSpeed.emit('speed', { data: Math.round(speed) });
-                //socketDirection.emit('direction', { data: Math.round(direction) });
             }
         });
     </script>
