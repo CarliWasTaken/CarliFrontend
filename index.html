@@ -13,39 +13,26 @@
     <script src="socket.io-1.2.0.js"></script>
     <script type="text/javascript" charset="utf-8">
         var socketSpeed = io('http://127.0.0.1:5000/drive');
+        let min = -127;
+        let neutral = 0;
+        let max = 127;
+
+        let speed = 0;
+        let direction = 0;
+        let speed_mod = 3.0;
+        let dir_mod = 3.0;
 
         document.addEventListener('keydown', (e) => {
-            console.log('down', e.key)
-            
-            // minimum speed
-            var min = -127;
-            // default speed
-            var neutral = 0;
-            // maximum speed
-            var max = 127;
-            
-            // speed of loop in  ms
-            var waitTime = 100 
-
-            // set speed to default value
-            var speed = neutral;
-            var direction = neutral;
-            // acceleration
-            var speed_mod = 3.0;
-            var dir_mod = 3.0;
-
-            if (!e.repeat) {
-
+            document.getElementById(e.key).classList.add('key-pressed');
+            if (e.repeat) {
                 // get pressed key
                 var key = e.key;
                 
                 // check if speed should be applied
                 if (key == 'w') {
                     speed += speed_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 } else if (key == 's') {
                     speed -= speed_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 }
                 
                 if (speed < min) {
@@ -57,10 +44,8 @@
 
                 if (key == 's') {
                     direction += dir_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 } else if (key == 'a') {
                     direction -= dir_mod;
-                    document.getElementById(key).classList.add('key-pressed');
                 }
                 
                 if (direction < min) {
@@ -83,22 +68,23 @@
                 var key = e.key;
 
                 if (key == 'w') {
-                    socketSpeed.emit('forward', { data: 'released' });
+                    speed = 0;
+                    socketSpeed.emit('speed', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                     console.log(key);
                 } else if (key == 's') {
-                    socketSpeed.emit('backward', { data: 'released' });
+                    speed = 0;
+                    socketSpeed.emit('speed', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'a') {
-                    socketSpeed.emit('left', { data: 'released' });
+                    direction = 0;
+                    socketSpeed.emit('direction', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 } else if (key == 'd') {
-                    socketSpeed.emit('right', { data: 'released' });
+                    direction = 0;
+                    socketSpeed.emit('direction', { data: 0 });
                     document.getElementById(key).classList.remove('key-pressed');
                 }
-
-                //socketSpeed.emit('speed', { data: Math.round(speed) });
-                //socketDirection.emit('direction', { data: Math.round(direction) });
             }
         });
     </script>
