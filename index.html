@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carli</title>
+    <link rel="stylesheet" href="index.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
+    <script src="socket.io-1.2.0.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socketSpeed = io('http://127.0.0.1:5000/drive');
+
+        document.addEventListener('keydown', (e) => {
+            // timestamp of last loop
+            var last = new Date();
+            // timestamp of current loop
+            var now;
+            
+            // minimum speed
+            var low = -127;
+            // default speed
+            var neutral = 0;
+            // maximum speed
+            var max = 127;
+            
+            // speed of loop in  ms
+            var waitTime = 100 
+
+            // set speed to default value
+            var speed = neutral;
+            var direction = neutral;
+            // acceleration
+            var speed_mod = 3.0;
+            var dir_mod = 3.0;
+
+            if (!e.repeat) {
+                // set current loop time
+                now = new Date();
+                // get pressed key
+                var key = e.key;
+                
+                // check if speed should be applied
+                if((now - last) >= waitTime) {
+                    if (key == 'w') {
+                        speed += speed_mod;
+                        document.getElementById(key).classList.add('key-pressed');
+                    } else if (key == 's') {
+                        speed -= speed_mod;
+                        document.getElementById(key).classList.add('key-pressed');
+                    }
+                    
+                    if (speed < min) {
+                        speed = min;
+                    } else if(speed > max) {
+                        speed = max;
+                    }
+
+
+
+                    if (key == 's') {
+                        direction += dir_mod;
+                        document.getElementById(key).classList.add('key-pressed');
+                    } else if (key == 'a') {
+                        direction -= dir_mod;
+                        document.getElementById(key).classList.add('key-pressed');
+                    }
+                    
+                    if (direction < min) {
+                        direction = min;
+                    } else if(direction > max) {
+                        direction = max;
+                    }
+
+                    // send speed value
+                    socketSpeed.emit('speed', { data: Math.round(speed) });
+                    //socketDirection.emit('direction', { data: Math.round(direction) });
+                    console.log("Speed    : " + speed);
+                    console.log("Direction: " + direction);
+
+                    last = now;
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!e.repeat) {
+                var key = e.key;
+
+                if (key == 'w') {
+                    socketSpeed.emit('forward', { data: 'released' });
+                    document.getElementById(key).classList.remove('key-pressed');
+                    console.log(key);
+                } else if (key == 's') {
+                    socketSpeed.emit('backward', { data: 'released' });
+                    document.getElementById(key).classList.remove('key-pressed');
+                } else if (key == 'a') {
+                    socketSpeed.emit('left', { data: 'released' });
+                    document.getElementById(key).classList.remove('key-pressed');
+                } else if (key == 'd') {
+                    socketSpeed.emit('right', { data: 'released' });
+                    document.getElementById(key).classList.remove('key-pressed');
+                }
+
+                socketSpeed.emit('speed', { data: Math.round(speed) });
+                //socketDirection.emit('direction', { data: Math.round(direction) });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Carli</h1>
+    <div id="control">
+        
+    </div>
+    <div class="container-main">
+        <div class="image"><img src="http://127.0.0.1:5000/video"></div>
+        
+        <div class="control-panel">
+            
+            <!-- connect -->
+            <div class="control-panel-part">
+                <div class="connect-area">
+                    <h2>Connect</h2>
+                    <input id="address" type="text" placeholder="ip:port">
+                    <button id="connect">Connect</button>
+                </div>
+            </div>
+            
+
+            <!-- wasd -->
+            <div class="control-panel-part">
+                <div class="row">
+                    <div class="key" id="w">W</div>
+
+                </div>
+                <div class="row">
+                    <div class="key" id="a">A</div>
+                    <div class="key" id="s">S</div>
+                    <div class="key" id="d">D</div>
+
+                </div>
+            </div>
+
+            <!-- ai -->
+            <div class="control-panel-part">
+                <div class="ai-area">
+                    <h2>AI-Mode</h2>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
