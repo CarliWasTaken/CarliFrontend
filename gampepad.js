@@ -2,7 +2,6 @@
 class JoyStickController{
 
     constructor(){
-        
         this.init();
         this.interval;
         this.gp;
@@ -15,11 +14,12 @@ class JoyStickController{
         this.angle_index = 0;
         //this.y_axis = 0;
 
-
-        this.update_interval = 500; // in ms
-        
+        this.update_interval = 1; // in ms
     }
 
+    /**
+     * add event listener for joystick
+     */
     init(){
         console.log('init joystick..');
         window.addEventListener("gamepadconnected", this.onJoyStickConnected.bind(this));
@@ -28,7 +28,7 @@ class JoyStickController{
 
     /**
      * handler for the joystick (when connected)
-     * If necessary, a button needs to be pushed (in order to detect it)
+     * - If necessary: a button needs to be pushed (in order to detect it)
      * @param {*} e event
      */
     onJoyStickConnected(e){
@@ -44,7 +44,7 @@ class JoyStickController{
         console.log(this.gp.axes);
 
         // poll gamepad object every 500ms
-        this.interval = setInterval(this.pollGamepads.bind(this), this.update_interval);
+        //this.interval = setInterval(this.pollGamepads.bind(this), this.update_interval);
 
     }
 
@@ -60,17 +60,21 @@ class JoyStickController{
     /**
      * is called every `this.update_interval` milliseconds (interval!) 
      */
-    pollGamepads(){
+    pollGamepads(f=null){
         console.log('polling gamepads..');
         this.gp = navigator.getGamepads()[this.gamepad_index];
-        console.log('throttle: ', this.gp.axes[this.throttle_index]);
-        console.log('angle:', this.gp.axes[this.angle_index]);
-    }
+        angle = this.gp.axes[this.angle_index];
+        throttle = this.gp.axes[this.throttle_index];
 
-    
+        console.log('throttle: ', throttle);
+        console.log('angle:', angle);
+
+        f(angle, throttle);
+        
+    }
 }
 
-const controller = new JoyStickController();
+// const controller = new JoyStickController();
 
 
       
