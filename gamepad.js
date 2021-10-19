@@ -60,21 +60,17 @@ class JoyStickController{
     /**
      * is called every `this.update_interval` milliseconds (interval!) 
      */
-    pollGamepads(f=null){
-        console.log('polling gamepads..');
+    pollGamepads(f){
+
+        console.log('polling gamepads..', this);
         this.gp = navigator.getGamepads()[this.gamepad_index];
-        angle = this.gp.axes[this.angle_index];
-        throttle = this.gp.axes[this.throttle_index];
+        let angle = this.gp.axes[this.angle_index];
+        let throttle = this.gp.axes[this.throttle_index];
 
         console.log('throttle: ', throttle);
         console.log('angle:', angle);
 
         f(angle, throttle);
-        
     }
 }
-
-// const controller = new JoyStickController();
-
-
       
