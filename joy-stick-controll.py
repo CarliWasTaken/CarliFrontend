@@ -28,7 +28,8 @@ while not done:
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
 
-        variables = {'speed': round(joystick.get_axis(1)*-127), 'steer': round(joystick.get_axis(0)*127)}
+        variables = {'speed': round(joystick.get_axis(3)*-127), 'steer': round(joystick.get_axis(0)*127)}
+        print(round(joystick.get_axis(3)*-127))
         sendBytes = str.encode(str(variables))
         UDPClientSocket.sendto(sendBytes, serverAddressPort)
 
