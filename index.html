@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="socket.io-1.2.0.js"></script>
     <script src="wasd.js"></script>
     <script src="controller.js"></script>
@@ -61,8 +62,13 @@
                     </label>
                 </div>
             </div>
-
+            
+            
         </div>
+    </div>
+    <div class="slidecontainer">
+        <label for="customRange2" class="form-label">Speed Control</label>
+        <input type="range" step="0.1" class="form-range" min="0" max="1" id="customRange2">
     </div>
 </body>
 

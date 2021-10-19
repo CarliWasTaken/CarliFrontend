@@ -61,8 +61,8 @@ class Controller{
     sendData(angle, throttle){
         console.log('sending data: angle=', angle, ', throttle=', throttle);
 
-        this.socketSpeed.emit('speed', { data: Math.round(speed) });
-        this.socketDirection.emit('direction', { data: Math.round(direction) });
+        this.socketSpeed.emit('speed', { data: Math.round(throttle) });
+        this.socketDirection.emit('direction', { data: Math.round(angle) });
     }
 }
 
