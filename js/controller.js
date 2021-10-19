@@ -74,4 +74,4 @@ class Controller{
     }
 }
 
-let controller = new Controller(inputType.WASD, 'http://192.168.43.103:5000/move');
+let controller = new Controller(inputType.JOYSTICK, 'http://192.168.43.103:5000/move');
