@@ -6,11 +6,20 @@ const inputType = {
 };
 
 class Controller{
+    /**
+     * 
+     * @param {*} method The InputType {joystick, wasd}
+     * @param {*} ip Carli's IP address 
+     */
     constructor(method=inputType.JOYSTICK, ip){
+        this.ip = ip;
         this.init(method);
-        this.openSockets(ip);
+        this.openSockets();
     }
 
+    /**
+     * @param {*} method the input type {joystick, wasd}
+     */
     init(method){
         console.log('init controller');
 
@@ -48,8 +57,8 @@ class Controller{
         }
     }
 
-    openSockets(ip){
-        this.socketMove = io(ip);
+    openSockets(){
+        this.socketMove = io(this.ip);
     }
 
     /**

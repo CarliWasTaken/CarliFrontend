@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carli</title>
-    <link rel="stylesheet" href="index.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="socket.io-1.2.0.js"></script>
-    <script src="wasd.js"></script>
-    <script src="controller.js"></script>
-    <script src="gamepad.js"></script>
+    <link rel="stylesheet" href="style/index.css"/>
+    <script src="js/socket.io-1.2.0.js"></script>
+    <script src="js/wasd.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/gamepad.js"></script>
 
 </head>
 
@@ -64,14 +64,14 @@
                     </label>
                 </div>
             </div>
-            
-            
+        </div>
+
+        <div class="slidecontainer">
+            <label for="customRange2" class="form-label">Speed Control</label>
+            <input type="range" step="0.01" class="form-range" min="0" max="1" id="customRange2">
         </div>
     </div>
-    <div class="slidecontainer">
-        <label for="customRange2" class="form-label">Speed Control</label>
-        <input type="range" step="0.1" class="form-range" min="0" max="1" id="customRange2">
-    </div>
+    
 </body>
 
 </html>
