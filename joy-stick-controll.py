@@ -3,7 +3,7 @@ import pygame
 
 # init Socket
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-serverAddressPort = ("127.0.0.1", 20001)
+serverAddressPort = ("192.168.43.103", 20001)
 bufferSize = 32
 
 # init pygame
@@ -28,7 +28,8 @@ while not done:
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
 
-        variables = {'x': round(joystick.get_axis(1)*-127), 'y': round(joystick.get_axis(0)*127)}
+        variables = {'speed': round(joystick.get_axis(3)*-127), 'steer': round(joystick.get_axis(0)*127)}
+        print(round(joystick.get_axis(3)*-127))
         sendBytes = str.encode(str(variables))
         UDPClientSocket.sendto(sendBytes, serverAddressPort)
 
