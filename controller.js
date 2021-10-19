@@ -6,9 +6,9 @@ const inputType = {
 };
 
 class Controller{
-    constructor(method=inputType.JOYSTICK){
+    constructor(method=inputType.JOYSTICK, ip){
         this.init(method);
-        this.openSockets();
+        this.openSockets(ip);
     }
 
     init(method){
@@ -48,9 +48,8 @@ class Controller{
         }
     }
 
-    openSockets(){
-        this.socketSpeed = io('http://127.0.0.1:5000/drive');
-        this.socketDirection = io('http://127.0.0.1:5000/drive');
+    openSockets(ip){
+        this.socketMove = io(ip);
     }
 
     /**
@@ -61,9 +60,9 @@ class Controller{
     sendData(angle, throttle){
         console.log('sending data: angle=', angle, ', throttle=', throttle);
 
-        this.socketSpeed.emit('speed', { data: Math.round(throttle) });
-        this.socketDirection.emit('direction', { data: Math.round(angle) });
+        this.socketMove.emit('steer', { data: Math.round(angle) });
+        this.socketMove.emit('drive', { data: Math.round(throttle) });
     }
 }
 
-let controller = new Controller(inputType.WASD);
+let controller = new Controller(inputType.WASD, 'http://192.168.43.103:5000/move');
