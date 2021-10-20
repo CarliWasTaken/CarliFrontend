@@ -1,27 +1,31 @@
 
-// minimum values
-var min_speed = 0.0;
-var min_direction = -1.0;
-// maximum values
-var max_speed = 1.0;
-var max_direction = 1.0;
-
-// speed slider
-var slider_speed = null;
-
-// key map
-var k_map = {};
-
 class WASD_Controller{
+
+    // minimum values
+    static min_speed = -1.0;
+    static min_direction = -1.0;
+
+    // maximum values
+    static max_speed = 1.0;
+    static max_direction = 1.0;
+
+    // speed slider
+    static slider_speed = null;
+
+    
+
     /**
-     * @param {*} f the function which should be called after every change in direction/speed 
+     * @param {*} sendDataFunction the function which should be called after every change in direction/speed 
      *      (sending these values via the websocket)
      */
-    constructor(f){
-        this.f = f;
+    constructor(sendDataFunction){
+        this.sendDataFunction = sendDataFunction;
         this.init();
-        this.dir = 0;
-        this.speed = 0;
+        this.dir = 0.0;
+        this.speed = 0.0;
+
+        // key map
+        this.k_map = {};
     }
 
     /**
@@ -37,50 +41,42 @@ class WASD_Controller{
      * @param {} e event
      */
     onKeyDown(e){
-        // document.getElementById(e.key).classList.add('key-pressed');
 
-        // if repeated key press
-        if (e.repeat) {
-            // get pressed key
-            var key = e.key;
+        // add class for styling
+        document.getElementById(e.key).classList.add('key-pressed');
+
+        // get pressed key
+        let key = e.key;
+        
+        let step = 0.01;
+        switch(key){
+
+            // back
+            case 's':
+                step = -0.01; 
+
+            // forward
+            case 'w':
+                this.speed = this.speed + step // for exponential speed-up change this line
+                this.speed = Math.max(this.speed, WASD_Controller.min_speed);
+                this.speed = Math.min(this.speed, WASD_Controller.max_speed);
+                break;
             
-            // add key to map
-            k_map[key] = true;
-            
-            if(slider_speed == null){
-                slider_speed = document.getElementById("customRange2");
-                // set slider max
-                slider_speed.max = max_speed * 100;
-                // set slider min
-                slider_speed.min = min_speed * 100;
-                // set slider starting position
-                slider_speed.value = (max_speed / 2) * 100;
-            }
-            
-            // speed value
-            this.speed = 0.0;
-            // direction value
-            this.dir = 0;
-            
-            // speed handling
-            if(k_map['w']){
-                this.speed = slider_speed.value / 100;
-            }
-            else if(k_map['s']){
-                this.speed = slider_speed.value / 100 * -1;
-            }
-            
-            // direction handling
-            if(k_map['a']){
-                this.dir = -1;
-            }
-            else if(k_map['d']){
-                this.dir = 1;
-            }
-            
-            // send speed value
-            this.f(this.dir, this.speed);
+            // left
+            case 'a':
+                step = -0.01; 
+
+            // right
+            case 'd':
+                this.dir = this.dir + step // for exponential speed-up change this line
+                this.dir = Math.max(this.dir, WASD_Controller.min_direction);
+                this.dir = Math.min(this.dir, WASD_Controller.max_direction);
+                break;
         }
+
+        
+        // send speed+direction values
+        this.sendDataFunction(this.dir, this.speed);
     }
 
     /**
@@ -88,44 +84,23 @@ class WASD_Controller{
      * @param {*} e event
      */
     onKeyUp(e){
-        if (!e.repeat) {
-            var key = e.key;
-        
-            // remove key from map
-            k_map[key] = false;
-            
-            switch(key){
-                case 'w':
-                case 's':
-                    this.f(this.dir, 0)
-                    // socketSpeed.emit('speed', { data: 0 });
-                    break;
-                    
-                case 'a':
-                case 'd':
-                    this.f(0, this.dir)
-                    // socketDirection.emit('direciton', { data: 0 });
-                    break;
-            }
-
-            // if (key == 'w') {
-            //     speed = 0;
-            //     socketSpeed.emit('speed', { data: 0 });
-            //     document.getElementById(key).classList.remove('key-pressed');
-            //     console.log(key);
-            // } else if (key == 's') {
-            //     speed = 0;
-            //     socketSpeed.emit('speed', { data: 0 });
-            //     document.getElementById(key).classList.remove('key-pressed');
-            // } else if (key == 'a') {
-            //     direction = 0;
-            //     socketSpeed.emit('direction', { data: 0 });
-            //     document.getElementById(key).classList.remove('key-pressed');
-            // } else if (key == 'd') {
-            //     direction = 0;
-            //     socketSpeed.emit('direction', { data: 0 });
-            //     document.getElementById(key).classList.remove('key-pressed');
-            // }
+        let key = e.key;
+    
+        switch(key){
+            case 'w':
+            case 's':
+                this.speed = 0
+                this.sendDataFunction(this.dir, this.speed) // send current direction, speed=0
+                break;
+                
+            case 'a':
+            case 'd':
+                this.dir = 0
+                this.sendDataFunction(this.dir, this.dir) // send direction=0, current speed
+                break;
         }
+
+        // remove class for styling
+        document.getElementById(key).classList.remove('key-pressed');
     }
 }
