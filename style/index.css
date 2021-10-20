@@ -23,7 +23,7 @@ h2{
     font-size: 32pt;
 }
 
-h1::selection, h2::selection {
+*::selection{
     background-color: #fff;
     color: rgb(34, 34, 34);
 }
@@ -100,13 +100,25 @@ img {
 }
 
 .control-panel-part .connect-area #address{
-    padding: 5px;
+    padding: 10px;
     outline: none;
+    border: none;
 }
 .control-panel-part .connect-area #connect{
-    padding: 5px;
+    padding: 10px;
     outline: none;
+    background-color: #fff;
+    border: none;
 }
+.control-panel-part .connect-area #connect:hover{
+    padding: 10px;
+    outline: none;
+    box-shadow: 2px 2px 2px #000;
+    border: none;
+
+
+}
+
 
 
 
