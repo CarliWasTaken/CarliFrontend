@@ -92,7 +92,7 @@ class WASD_Controller{
      * Exponential Speed-up function
      * ----------------------------
      * 
-     * > `value = (0^|value| * step + value) * multiplier`
+     * > value = ((0 ^ |value|) * step + value) * multiplier
      * 
      * > `(0 ^ |value|) * step + value` .... eliminate zero-values or preserve the original value
      * 
@@ -109,7 +109,7 @@ class WASD_Controller{
      * @param {*} multiplier the factor the `value` will be multiplied with
      */
     exponentialSpeedUp(value, step, multiplier){
-        value = Math.pow(0, Math.abs(value)) * step + value; // eliminate zero-values for `this.speed`
+        value = Math.pow(0, Math.abs(value)) * step + value; // eliminate zero-values for `value`
         value *= multiplier;
         return value;
     }
