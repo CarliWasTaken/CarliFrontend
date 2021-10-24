@@ -23,6 +23,11 @@ class WASD_Controller{
         this.init();
         this.dir = 0.0;
         this.speed = 0.0;
+        this.speed_multiplier = 1.1;
+        this.dir_multiplier = 1.1;
+
+        this.step = 0.01;
+
 
         // key map
         this.k_map = {};
@@ -47,28 +52,31 @@ class WASD_Controller{
 
         // get pressed key
         let key = e.key;
+
+        let step = this.step;
         
-        let step = 0.01;
         switch(key){
 
             // back
             case 's':
-                step = -0.01; 
+                step = -this.step;
 
             // forward
             case 'w':
-                this.speed = this.speed + step // for exponential speed-up change this line
+                this.speed = this.exponentialSpeedUp(this.speed, step, this.speed_multiplier);
+                // this.speed = this.linearSpeedUp(this.speed, step);
                 this.speed = Math.max(this.speed, WASD_Controller.min_speed);
                 this.speed = Math.min(this.speed, WASD_Controller.max_speed);
                 break;
             
             // left
             case 'a':
-                step = -0.01; 
+                step = -this.step; 
 
             // right
             case 'd':
-                this.dir = this.dir + step // for exponential speed-up change this line
+                this.dir = this.exponentialSpeedUp(this.dir, step, this.dir_multiplier);
+                // this.dir = this.linearSpeedUp(this.dir, step);
                 this.dir = Math.max(this.dir, WASD_Controller.min_direction);
                 this.dir = Math.min(this.dir, WASD_Controller.max_direction);
                 break;
@@ -77,6 +85,42 @@ class WASD_Controller{
         
         // send speed+direction values
         this.sendDataFunction(this.dir, this.speed);
+    }
+
+
+    /**
+     * Exponential Speed-up function
+     * ----------------------------
+     * 
+     * > `value = (0^|value| * step + value) * multiplier`
+     * 
+     * > `(0 ^ |value|) * step + value` .... eliminate zero-values or preserve the original value
+     * 
+     * ---
+     * 
+     *  0^0 = 1 
+     *  - if `value` = 0 --> it will take `step` as base value to start with 
+     *      > (`value` = `step`, iff `value` = 0)
+     *  - if `value` = 0.1234 --> 0^0.1234 * `step` = 0 
+     *      > (`value` = `value`, if `value` != 0)
+     * ---
+     * @param {*} step whether it's positive or negative speedup
+     * @param {*} value the value to be exponentially manipulated
+     * @param {*} multiplier the factor the `value` will be multiplied with
+     */
+    exponentialSpeedUp(value, step, multiplier){
+        value = Math.pow(0, Math.abs(value)) * step + value; // eliminate zero-values for `this.speed`
+        value *= multiplier;
+        return value;
+    }
+
+    /**
+     * The Linear Speed-up Function
+     * @param {*} value The value to be linearly increased/decreased
+     * @param {*} step 
+     */
+    linearSpeedUp(value, step){
+        return value + step;
     }
 
     /**
