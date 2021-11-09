@@ -1,20 +1,29 @@
 html {
-    background-color: gray;
     font-size: 26pt;
     font-family: 'Barlow', sans-serif;
+    padding-top: 50px;
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    background-color: gray;
+    height: 100%;
+    width: 100%;
 }
 
 
 
 h1{
     text-align: center;
+    margin-bottom: 50px;
 }
 
 h2{
     font-size: 32pt;
 }
 
-h1::selection, h2::selection {
+*::selection{
     background-color: #fff;
     color: rgb(34, 34, 34);
 }
@@ -24,6 +33,7 @@ h1::selection, h2::selection {
     flex-direction: column;
     width: 80%;
     margin: 0 auto;
+    margin-bottom: 50px;
     justify-content: center;
     text-align: center;
 }
@@ -48,15 +58,9 @@ img {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-bottom: 50px;
 }
 
-.slidecontainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 50%;
-}
 
 .control-panel-part{
     display: flex;
@@ -96,13 +100,25 @@ img {
 }
 
 .control-panel-part .connect-area #address{
-    padding: 5px;
+    padding: 10px;
     outline: none;
+    border: none;
 }
 .control-panel-part .connect-area #connect{
-    padding: 5px;
+    padding: 10px;
     outline: none;
+    background-color: #fff;
+    border: none;
 }
+.control-panel-part .connect-area #connect:hover{
+    padding: 10px;
+    outline: none;
+    box-shadow: 2px 2px 2px #000;
+    border: none;
+
+
+}
+
 
 
 
@@ -170,3 +186,51 @@ img {
   .slider.round:before {
     border-radius: 50%;
   }
+
+
+  /* Slider */
+
+
+
+.slidecontainer {
+    width: 20%; /* Width of the outside container */
+    margin: 0 auto;
+}
+
+/* The slider itself */
+.form-range {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 15px;
+    border-radius: 5px; 
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.form-range:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px;
+    border-radius: 50%; 
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+  
+.form-range::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px;
+    border-radius: 50%;
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
