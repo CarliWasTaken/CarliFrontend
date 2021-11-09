@@ -44,8 +44,18 @@ class WASD_Controller{
     gameloop(){
         // send speed+direction values
         setInterval(() => {
-            this.sendDataFunction(this.dir, this.speed);
-            console.log('here');
+            
+            // // for linear/exponential speedup
+            // let dir = this.dir;
+            // let speed = this.speed;
+
+            // for "bezier" / "circular"? speedup (the linearSpeedUp-function has to be used as well, to increase the `x`-coordinates !!)
+            let dir = this.bezier(this.dir);
+            let speed = this.bezier(this.speed);
+            console.log('speed', speed, this.speed);
+
+
+            this.sendDataFunction(dir, speed);
         }, 60);
     }
 
@@ -121,6 +131,35 @@ class WASD_Controller{
         value = Math.pow(0, Math.abs(value)) * step + value; // eliminate zero-values for `value`
         value *= multiplier;
         return value;
+    }
+
+    /**
+     * A 3-point bezier curve that looks like a quarter circle.
+     *  - provides very fast speedup in the beginning, slow speedup in the end
+     * 
+     *  f(x) = sqrt(1 - (x-1)^2), x in [0; 1]
+     * 
+     * 
+     * 1|                 ***********
+     *  |          *******
+     *  |      ***
+     *  |   ***
+     *  |  **
+     *  | **
+     *  | *
+     *  | *
+     *  | *
+     * 0 --------------------------- 1
+     * ---
+     * 
+     * To use kind of speedup, simple use the `linearSpeedup`-function to increase the `x`-values 
+     * and this function (`bezier`) to compute the actual speed
+     * 
+     * @param {*} x a number between 0 and 1
+     * @returns a number between 0 and 1
+     */
+    bezier(x){
+        return Math.sqrt(1.0 - Math.pow(x-1.0, 2));
     }
 
      /**
