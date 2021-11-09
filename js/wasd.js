@@ -20,17 +20,15 @@ class WASD_Controller{
      */
     constructor(sendDataFunction){
         this.sendDataFunction = sendDataFunction;
-        this.init();
         this.dir = 0.0;
         this.speed = 0.0;
         this.speed_multiplier = 1.1;
         this.dir_multiplier = 1.1;
-
-        this.step = 0.01;
-
-
-        // key map
-        this.k_map = {};
+        
+        this.step_throttle = 0.01;
+        this.step_dir = 0.5;
+        
+        this.init();
     }
 
     /**
@@ -39,6 +37,16 @@ class WASD_Controller{
     init(){
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
+        setTimeout(() => this.gameloop(), 2000);
+        // this.gameloop();
+    }
+
+    gameloop(){
+        // send speed+direction values
+        setInterval(() => {
+            this.sendDataFunction(this.dir, this.speed);
+            console.log('here');
+        }, 60);
     }
 
     /**
@@ -53,39 +61,40 @@ class WASD_Controller{
         // get pressed key
         let key = e.key;
 
-        let step = this.step;
-        
-        switch(key){
+        let step_throttle = this.step_throttle;
+        let step_dir = this.step_dir;
 
-            // back
-            case 's':
-                step = -this.step;
-
-            // forward
-            case 'w':
-                this.speed = this.exponentialSpeedUp(this.speed, step, this.speed_multiplier);
-                // this.speed = this.linearSpeedUp(this.speed, step);
-                this.speed = Math.max(this.speed, WASD_Controller.min_speed);
-                this.speed = Math.min(this.speed, WASD_Controller.max_speed);
-                break;
-            
-            // left
-            case 'a':
-                step = -this.step; 
-
-            // right
-            case 'd':
-                this.dir = this.exponentialSpeedUp(this.dir, step, this.dir_multiplier);
-                // this.dir = this.linearSpeedUp(this.dir, step);
-                this.dir = Math.max(this.dir, WASD_Controller.min_direction);
-                this.dir = Math.min(this.dir, WASD_Controller.max_direction);
-                break;
+        if(key == 's'){
+            step_throttle = -this.step_throttle;
+            this.onThrottle(step_throttle);
+        }
+        if(key == 'a'){
+            step_dir = -this.step_dir;
+            this.onDir(step_dir);
         }
 
-        
-        // send speed+direction values
-        this.sendDataFunction(this.dir, this.speed);
+        if(key == 'w'){
+            this.onThrottle(step_throttle);
+        }
+        if(key == 'd'){
+            this.onDir(step_dir);
+        }
     }
+
+    onThrottle(step){
+        // this.speed = this.exponentialSpeedUp(this.speed, step, this.speed_multiplier);
+        this.speed = this.linearSpeedUp(this.speed, step);
+        this.speed = Math.max(this.speed, WASD_Controller.min_speed);
+        this.speed = Math.min(this.speed, WASD_Controller.max_speed);
+    }
+
+    onDir(step){
+        // this.dir = this.exponentialSpeedUp(this.dir, step, this.dir_multiplier);
+        this.dir = this.linearSpeedUp(this.dir, step);
+        this.dir = Math.max(this.dir, WASD_Controller.min_direction);
+        this.dir = Math.min(this.dir, WASD_Controller.max_direction);
+    }
+    
 
 
     /**
@@ -114,7 +123,7 @@ class WASD_Controller{
         return value;
     }
 
-    /**
+     /**
      * The Linear Speed-up Function
      * @param {*} value The value to be linearly increased/decreased
      * @param {*} step 
@@ -129,21 +138,16 @@ class WASD_Controller{
      */
     onKeyUp(e){
         let key = e.key;
-    
-        switch(key){
-            case 'w':
-            case 's':
-                this.speed = 0
-                this.sendDataFunction(this.dir, this.speed) // send current direction, speed=0
-                break;
-                
-            case 'a':
-            case 'd':
-                this.dir = 0
-                this.sendDataFunction(this.dir, this.dir) // send direction=0, current speed
-                break;
-        }
 
+        if(key == 'w' || key == 's'){
+            this.speed = 0 // stop
+            this.sendDataFunction(this.dir, -2) // send current direction, speed=0
+        }
+        if(key =='a' || key == 'd'){
+            this.dir = 0 // stop
+            this.sendDataFunction(-2, this.speed) // send direction=0, current speed
+        }
+    
         // remove class for styling
         document.getElementById(key).classList.remove('key-pressed');
     }
