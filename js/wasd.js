@@ -18,19 +18,16 @@ class WASD_Controller{
      * @param {*} sendDataFunction the function which should be called after every change in direction/speed 
      *      (sending these values via the websocket)
      */
-    constructor(sendDataFunction){
-        this.sendDataFunction = sendDataFunction;
+    constructor(sendDataFunction){    
+        this.sendDataFunction = sendDataFunction; 
+
+        this.step_throttle = 0.01;
+        this.step_dir = 0.333333;
+
+        this.speedFunctionThrottle = new SpeedUp(0);
+        this.speedFunctionDir = new SpeedUp(0);
+        
         this.init();
-        this.dir = 0.0;
-        this.speed = 0.0;
-        this.speed_multiplier = 1.1;
-        this.dir_multiplier = 1.1;
-
-        this.step = 0.01;
-
-
-        // key map
-        this.k_map = {};
     }
 
     /**
@@ -39,6 +36,24 @@ class WASD_Controller{
     init(){
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
+        setTimeout(() => this.gameloop(), 2000);
+    }
+
+    gameloop(){
+        // send speed+direction values
+        setInterval(() => {
+            
+            // // for linear speedup
+            // let dir = this.speedFunctionThrottle.linearSpeedUp(this.step_throttle);
+            // let speed = this.speedFunctionThrottle.linearSpeedUp(this.step_dir);
+
+            // for "bezier" / "circular"? speedup
+            let dir = this.speedFunctionDir.y;
+            let speed = this.speedFunctionThrottle.y;
+            console.log('speed', speed, 'dir', dir);
+
+            this.sendDataFunction(dir, speed);
+        }, 60); // 60ms
     }
 
     /**
@@ -53,75 +68,25 @@ class WASD_Controller{
         // get pressed key
         let key = e.key;
 
-        let step = this.step;
-        
-        switch(key){
 
-            // back
-            case 's':
-                step = -this.step;
-
-            // forward
-            case 'w':
-                this.speed = this.exponentialSpeedUp(this.speed, step, this.speed_multiplier);
-                // this.speed = this.linearSpeedUp(this.speed, step);
-                this.speed = Math.max(this.speed, WASD_Controller.min_speed);
-                this.speed = Math.min(this.speed, WASD_Controller.max_speed);
-                break;
-            
-            // left
-            case 'a':
-                step = -this.step; 
-
-            // right
-            case 'd':
-                this.dir = this.exponentialSpeedUp(this.dir, step, this.dir_multiplier);
-                // this.dir = this.linearSpeedUp(this.dir, step);
-                this.dir = Math.max(this.dir, WASD_Controller.min_direction);
-                this.dir = Math.min(this.dir, WASD_Controller.max_direction);
-                break;
+        if(key == 's'){
+            this.speedFunctionThrottle.x -= this.step_throttle;
+            this.speedFunctionThrottle.bezier();
         }
-
-        
-        // send speed+direction values
-        this.sendDataFunction(this.dir, this.speed);
+        if(key == 'a'){
+            this.speedFunctionDir.x -= this.step_dir;
+            this.speedFunctionDir.bezier();
+        }
+        if(key == 'w'){
+            this.speedFunctionThrottle.x += this.step_throttle;
+            this.speedFunctionThrottle.bezier();
+        }
+        if(key == 'd'){
+            this.speedFunctionDir.x += this.step_dir;
+            this.speedFunctionDir.bezier();
+        }
     }
-
-
-    /**
-     * Exponential Speed-up function
-     * ----------------------------
-     * 
-     * > value = ((0 ^ |value|) * step + value) * multiplier
-     * 
-     * > `(0 ^ |value|) * step + value` .... eliminate zero-values or preserve the original value
-     * 
-     * ---
-     * 
-     *  0^0 = 1 
-     *  - if `value` = 0 --> it will take `step` as base value to start with 
-     *      > (`value` = `step`, iff `value` = 0)
-     *  - if `value` = 0.1234 --> 0^0.1234 * `step` = 0 
-     *      > (`value` = `value`, if `value` != 0)
-     * ---
-     * @param {*} step whether it's positive or negative speedup
-     * @param {*} value the value to be exponentially manipulated
-     * @param {*} multiplier the factor the `value` will be multiplied with
-     */
-    exponentialSpeedUp(value, step, multiplier){
-        value = Math.pow(0, Math.abs(value)) * step + value; // eliminate zero-values for `value`
-        value *= multiplier;
-        return value;
-    }
-
-    /**
-     * The Linear Speed-up Function
-     * @param {*} value The value to be linearly increased/decreased
-     * @param {*} step 
-     */
-    linearSpeedUp(value, step){
-        return value + step;
-    }
+      
 
     /**
      * handler: key-up
@@ -129,21 +94,18 @@ class WASD_Controller{
      */
     onKeyUp(e){
         let key = e.key;
-    
-        switch(key){
-            case 'w':
-            case 's':
-                this.speed = 0
-                this.sendDataFunction(this.dir, this.speed) // send current direction, speed=0
-                break;
-                
-            case 'a':
-            case 'd':
-                this.dir = 0
-                this.sendDataFunction(this.dir, this.dir) // send direction=0, current speed
-                break;
-        }
 
+        if(key == 'w' || key == 's'){
+            this.speedFunctionThrottle.x = 0;
+            this.speedFunctionThrottle.y = 0;
+            this.sendDataFunction(this.speedFunctionDir.y, -2) // send current direction, speed=0
+        }
+        if(key =='a' || key == 'd'){
+            this.speedFunctionDir.x = 0;
+            this.speedFunctionDir.y = 0;
+            this.sendDataFunction(-2, this.speedFunctionThrottle.y); // send direction=0, current speed
+        }
+    
         // remove class for styling
         document.getElementById(key).classList.remove('key-pressed');
     }
