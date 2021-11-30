@@ -11,14 +11,13 @@ pygame.init()
 done = False
 clock = pygame.time.Clock()
 pygame.joystick.init()
-
+speed = False
 while not done:
-
     for event in pygame.event.get(): # User did something.
         if event.type == pygame.JOYBUTTONDOWN:
-            print("Joystick button pressed.")
+            speed = True
         elif event.type == pygame.JOYBUTTONUP:
-            print("Joystick button released.")
+            speed = False
 
     # Get count of joysticks.
     joystick_count = pygame.joystick.get_count()
@@ -28,10 +27,15 @@ while not done:
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
 
-        variables = {'speed': -1*round(joystick.get_axis(3),2), 'steer': round(joystick.get_axis(0),2)}
+
+        variables = None
+        if(speed):
+            variables = {'speed': -1*round(joystick.get_axis(3),2), 'steer': round(joystick.get_axis(0),2)}
+        else:
+            variables = {'speed': 0, 'steer': round(joystick.get_axis(0),2)}
         print(variables)
         sendBytes = str.encode(str(variables))
         UDPClientSocket.sendto(sendBytes, serverAddressPort)
 
-    clock.tick(60)
+    clock.tick(50)
 pygame.quit()
