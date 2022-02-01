@@ -12,28 +12,34 @@ done = False
 clock = pygame.time.Clock()
 pygame.joystick.init()
 speed = False
+
 while not done:
-    for event in pygame.event.get(): # User did something.
+    # Iterate all user events
+    for event in pygame.event.get():
         if event.type == pygame.JOYBUTTONDOWN:
             speed = True
         elif event.type == pygame.JOYBUTTONUP:
             speed = False
 
-    # Get count of joysticks.
+    # Get count of joysticks
     joystick_count = pygame.joystick.get_count()
 
-    # For each joystick:
+    # Init every joystick
     for i in range(joystick_count):
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
 
-
         variables = None
+
+        # Checks if the throttle button is pressed
         if(speed):
             variables = {'speed': -1*round(joystick.get_axis(3),2), 'steer': round(joystick.get_axis(0),2)}
         else:
             variables = {'speed': 0, 'steer': round(joystick.get_axis(0),2)}
+        # Print variables for debug
         print(variables)
+        
+        # Encode and send the data to the server
         sendBytes = str.encode(str(variables))
         UDPClientSocket.sendto(sendBytes, serverAddressPort)
 
