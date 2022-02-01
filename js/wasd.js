@@ -31,7 +31,7 @@ class WASD_Controller{
     }
 
     /**
-     * initializes all the handlers
+     * Initializing all Event Handlers for Keyboard Input
      */
     init(){
         document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -57,7 +57,8 @@ class WASD_Controller{
     }
 
     /**
-     * handler: key-down
+     * Key Down event
+     * 
      * @param {} e event
      */
     onKeyDown(e){
