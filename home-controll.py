@@ -4,7 +4,8 @@ import pygame
 
 # init Socket
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-serverAddressPort = ("127.0.0.1", 20001)
+#serverAddressPort = ("127.0.0.1", 20001)
+serverAddressPort = ("192.168.43.103", 20001)
 bufferSize = 32
 
 # init pygame
