@@ -16,8 +16,8 @@ while not done:
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
 
+    '''
     for b in range(joystick.get_numbuttons()):
-        print(str(joystick.get_axis(0)))
         if joystick.get_button(b) == 1:
             print(f'Button {b}: {joystick.get_button(b)}')
     '''
@@ -42,7 +42,7 @@ while not done:
     print(variables)
     sendBytes = str.encode(str(variables))
     UDPClientSocket.sendto(sendBytes, serverAddressPort)
-        '''
+        
 
     clock.tick(50)
 pygame.quit()
